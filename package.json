@@ -1,0 +1,23 @@
+{
+  "name": "devtinder-backend",
+  "version": "1.0.0",
+  "description": "Tinder for devs",
+  "keywords": [
+    "node.js",
+    "javascript"
+  ],
+  "license": "ISC",
+  "author": "Ajay Panidapu",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
