@@ -2,23 +2,23 @@
 const express = require('express')
 // require express from node-modules
 
+const {adminAuth} = require("./middlewares/auth")
 const app= express()
 
-app.use('/', (req,res,next) => {
-    // res.send('initial response')
-    next()
-})
+app.use('/admin',adminAuth)
 
 
-app.get('/user',(req,res,next) => {
-    // res.send('successfully get user data')
-    // is a request handler because it executes every time a request comes to /.
-    next()
-})
-
-app.get('/user', (req,res,next) => {
-    res.send('2th response')
+app.use('/user', (req,res,next) => {
+    res.send('get all users')
     // next()
+})
+
+app.use('/admin/getAllData', (req,res) => {
+    res.send('get all data')
+})
+
+app.use('/admin/delete', (req,res) => {
+    res.send('delete all data')
 })
 
 
