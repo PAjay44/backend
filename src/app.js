@@ -4,24 +4,23 @@ const express = require('express')
 
 const app= express()
 
+app.use('/', (req,res,next) => {
+    // res.send('initial response')
+    next()
+})
+
+
 app.get('/user',(req,res,next) => {
     // res.send('successfully get user data')
     // is a request handler because it executes every time a request comes to /.
     next()
-},(req,res,next) => {
-    // res.send('2nd response')
-    next()
+})
 
-},(req,res,next) => {
-    // res.send('3rd response')
-    next()
+app.get('/user', (req,res,next) => {
+    res.send('2th response')
+    // next()
+})
 
-},(req,res,next) => {
-    // res.send('4th response')
-    next()
-},(req,res,next) => {
-    res.send('5th response')
-    })
 
 app.listen(3000, () => {
     console.log('server is running on port 3000')
