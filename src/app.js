@@ -1,26 +1,22 @@
-
 const express = require('express')
 // require express from node-modules
 
-const {adminAuth} = require("./middlewares/auth")
 const app= express()
 
-app.use('/admin',adminAuth)
 
-
-app.use('/user', (req,res,next) => {
-    res.send('get all users')
-    // next()
+app.get('/user',(req,res) => {
+//   try{  
+    throw new Error('fffff')
+    // res.send('user came')
+// } catch(err){
+//     res.status(500).send('contact support team')
+// }
 })
 
-app.use('/admin/getAllData', (req,res) => {
-    res.send('get all data')
-})
-
-app.use('/admin/delete', (req,res) => {
-    res.send('delete all data')
-})
-
+app.use('/', (err,req,res,next) => {
+    res.status(500).send('something went  wrong')
+    // created for unhandled error by default
+}) 
 
 app.listen(3000, () => {
     console.log('server is running on port 3000')
