@@ -17,10 +17,9 @@ app.post("/signUp", async (req, res) => {
     await user.save();
     res.send("User added Successfully");
   } catch (err) {
-    res.status(400).send("Failed create User");
+    res.status(400).send("Error message:" + err.message);
   }
 });
-
 
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
@@ -42,37 +41,34 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-app.delete('/user', async (req,res) => {
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  console.log(userId);
+  try {
+    await User.findByIdAndDelete(userId);
+    res.send("user deleted successfully");
+  } catch (err) {
+    res.status(400).send("Failed to delete user");
+  }
+});
 
-    const userId = req.body.userId
-    console.log(userId)
-    try{
-      await  User.findByIdAndDelete(userId)
-      res.send('user deleted successfully')
-    }catch(err){
-      res.status(400).send('Failed to delete user')
-    }
-      
-})
-
-app.patch('/user', async (req,res) => {
-
-    const userId = req.body.userId
-    const data= req.body
-    console.log(userId)
-    console.log(data)
-    try{
-      const beforeData=await  User.findOneAndUpdate(userId,data,{ returnDocument:"before"} )
-      //  const beforeData=await  User.findOneAndUpdate({emailId:emailId},data,{returnDocument:"before"} )
-      console.log(beforeData)
-      res.send('user updated successfully')
-    }catch(err){
-      res.status(400).send(err.message)
-    }
-      
-})
-
-
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  console.log(userId);
+  console.log(data);
+  try {
+    const beforeData = await User.findOneAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+    //  const beforeData=await  User.findOneAndUpdate({emailId:emailId},data,{returnDocument:"before"} )
+    console.log(beforeData);
+    res.send("user updated successfully");
+  } catch (err) {
+    res.status(400).send("Error Occured:" + err.message);
+  }
+});
 
 connectDB()
   // First coonected to DB ,after that start the server and listen the request on port 3000
