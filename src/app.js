@@ -52,16 +52,32 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:id", async (req, res) => {
+  // Dynamic params
+  const userId = req.params?.id;
   const data = req.body;
-  console.log(userId);
-  console.log(data);
+
   try {
+    const ALLOWED_UPDATES = ["age", "gender", "photoUrl", "skills", "about"];
+
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k),
+    );
+    // loop through each key in obj from data and every key must includes in allowed updates
+
+    if (!isUpdateAllowed) {
+      throw new Error("update not allowed");
+    }
+
+    if (data.skills.length > 15) {
+      throw new Error("Greater than 15 skills not allowed to add");
+    }
+
     const beforeData = await User.findOneAndUpdate({ _id: userId }, data, {
       returnDocument: "before",
       runValidators: true,
     });
+
     //  const beforeData=await  User.findOneAndUpdate({emailId:emailId},data,{returnDocument:"before"} )
     console.log(beforeData);
     res.send("user updated successfully");
