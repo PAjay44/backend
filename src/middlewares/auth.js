@@ -1,15 +1,33 @@
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-const adminAuth = (req,res,next) => {
+const userAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    // cookies parser parse the cookie into JS obj, which can understand our api
+    if (!token) {
+      throw new Error("Invalid token");
+    }
 
-    const token ='xyz'
+    const decodedMessage = jwt.verify(token, "DevTinder@#123");
 
-     const isAdminauthroised = token==="xyz"
-     if(!isAdminauthroised){
-        res.status(401).send('Unauthorized request')
-     }else{
-        next()
-     }
+    // signature header+payload+secret key
+    // From the token it extract header,payload and create a new with secret key and client signature===my signature
+    // After verifies sign, decode the payload and get user detail through the information in payload
 
-}
+    const { _id } = decodedMessage;
 
-module.exports={adminAuth}
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw new Error("User Not Found");
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+};
+
+module.exports = { userAuth };

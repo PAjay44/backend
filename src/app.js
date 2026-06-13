@@ -1,56 +1,23 @@
 const express = require("express");
 // require express from node-modules
 const connectDB = require("../src/config/database");
-const User = require("./models/user");
+const cookieParser = require("cookie-parser");
+const profileRouter = require("./routes/profile");
+const authRouter = require("./routes/auth");
+// const authRouter = require("./routes/auth");
+// const profileRouter = require("./routes/profile");
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 // Middleware that parses incoming JSON request bodies.
 // It converts JSON data into a JavaScript object
 // and stores it in req.body before passing control
 // to the next route handler.
 
-app.post("/signUp", async (req, res) => {
-  const user = new User(req.body);
-  // create a new Instance of User model using the data from the req
-  try {
-    await user.save();
-    res.send("User added Successfully");
-  } catch (err) {
-    res.status(400).send("Error message:" + err.message);
-  }
-});
+app.use('/',authRouter)
+app.use('/',profileRouter)
 
-app.get("/user", async (req, res) => {
-  const userEmail = req.body.emailId;
-  try {
-    const users = await User.find({ emailId: userEmail });
-    // get the users by using model name of that data
-    res.send(users);
-  } catch (err) {
-    res.status(400).send("user not found");
-  }
-});
-
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    res.status(400).send("Users not Found");
-  }
-});
-
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
-  console.log(userId);
-  try {
-    await User.findByIdAndDelete(userId);
-    res.send("user deleted successfully");
-  } catch (err) {
-    res.status(400).send("Failed to delete user");
-  }
-});
 
 app.patch("/user/:id", async (req, res) => {
   // Dynamic params

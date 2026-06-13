@@ -1,4 +1,7 @@
-const { mongoose } = require("mongoose");
+const mongoose = require('mongoose');
+const validator = require('validator');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema({
   firstName: {
@@ -16,12 +19,23 @@ const userSchema = mongoose.Schema({
   emailId:{
     type: String,
     required: true,
-    unique: true // unique email for new User
+    unique: true, // unique email for new User
+    lowercase: true,
+    validate(value){
+      if(!validator.isEmail(value)){
+        throw new Error('Email is not valid: ', + value)
+      }
+    },
   },
 
   password:{
     type:String,
-    required:true
+    required:true,
+    validate(value){
+      if(!validator.isStrongPassword(value)){
+        throw new Error('Enter a strong password:'+ value)
+      }
+    },
   },
 
   age:{
@@ -54,8 +68,33 @@ const userSchema = mongoose.Schema({
   timestamps: true
 });
   
-// We create the User model one time. It acts as a blueprint based on the schema.
+
+userSchema.methods.getJWT = async function () {
+  const user = this
+  const token = await jwt.sign({ _id:user._id}, "DevTinder@#123");
+  return token
+}
+ // Instead of creating token we can do here attach to schema  
+ // using schema methods make it reusable,we can use where ever we want
+ // we can attach some methods to this schema ,which is related to User,
+ // these are helper methods, that is related to user
+ // whenever we create new instance of that model, the documents all are the instances of this model
+ // when I refer "this" equal to the user, that represents that particular instance.
+ // when we call User.jwt method the user is Ajay and it will create jwt for that user
+
+ userSchema.methods.validatePassword = async function (passwordInputByUser) {
+
+  const user = this
+  const hashPassword = user.password
+  const isPasswordValid = await bcrypt.compare(passwordInputByUser, hashPassword);
+  return isPasswordValid
+ }
+
+ module.exports = mongoose.model('User', userSchema)
+ // We create the User model one time. It acts as a blueprint based on the schema.
 // Every time a new user comes, we create a new User instance/document from this model.
 // Schema = What fields a User has.
 // Model = Blueprint/Class created from the schema.
- module.exports = mongoose.model('User', userSchema)
+
+
+
