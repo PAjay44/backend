@@ -1,11 +1,12 @@
 const express = require("express");
 // require express from node-modules
+require("dotenv").config();
 const connectDB = require("../src/config/database");
 const cookieParser = require("cookie-parser");
 const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
-// const authRouter = require("./routes/auth");
-// const profileRouter = require("./routes/profile");
+const requestRouter  = require("./routes/request");
+const passwordRouter = require("./routes/password");
 const app = express();
 
 app.use(express.json());
@@ -17,6 +18,8 @@ app.use(cookieParser());
 
 app.use('/',authRouter)
 app.use('/',profileRouter)
+app.use('/',requestRouter)
+app.use('/',passwordRouter)
 
 
 app.patch("/user/:id", async (req, res) => {
