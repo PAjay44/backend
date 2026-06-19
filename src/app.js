@@ -7,6 +7,7 @@ const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
 const requestRouter  = require("./routes/request");
 const passwordRouter = require("./routes/password");
+const userRouter = require("./routes/user");
 const app = express();
 
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use('/',authRouter)
 app.use('/',profileRouter)
 app.use('/',requestRouter)
 app.use('/',passwordRouter)
+app.use('/',userRouter)
 
 
 app.patch("/user/:id", async (req, res) => {

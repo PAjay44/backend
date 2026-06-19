@@ -1,21 +1,25 @@
 const mongoose = require("mongoose");
+const User = require("./user");
 
 const connectionRequestSchema = mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref:"User"
+      // ref fun it build relation between collections,and we can refer to that collection and populate data
     },
     toUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref:'User'
     },
 
     status: {
       type: String,
-      enum: ["interested", "ignored", "accepeted", "rejected"],
+      enum: ["interested", "ignored", "accepted", "rejected"],
       message: `{VALUE} is incorrect status  type`,
     },
   },
-  { timeStamp: true },
+  { timeStamps: true },
 );
 
 connectionRequestSchema.pre("save", function(){
