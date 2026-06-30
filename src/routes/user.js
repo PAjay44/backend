@@ -4,7 +4,7 @@ const User = require("../models/user");
 const express = require("express");
 const userRouter = express.Router();
 
-const USER_SAFE_DATA = ["firstName", "lastName", "age", "gender", "photoUrl"];
+const USER_SAFE_DATA = ["firstName", "lastName", "age", "gender", "photoUrl","about"];
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   try {
@@ -81,10 +81,10 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       ],
     })
       .select(USER_SAFE_DATA)
-      .skip(skip)// skip(0)
+      .skip(skip) // skip(0)
       .limit(limit);
 
-    res.json({ data });
+    res.send( data );
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }

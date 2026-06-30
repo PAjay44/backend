@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
     const token = req.cookies.token;
     // cookies parser parse the cookie into JS obj, which can understand our api
     if (!token) {
-      throw new Error("Invalid token");
+      res.status(401).send('Please Login')
     }
 
     const decodedMessage = jwt.verify(token, "DevTinder@#123");

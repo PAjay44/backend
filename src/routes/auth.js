@@ -52,13 +52,14 @@ authRouter.post("/login", async (req, res) => {
 
     const token = await user.getJWT();
 
-    res.cookie("token", token);
-    console.log(token);
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
 
     if (isPasswordValid) {
-      res.send("Login Successfully !!");
+      res.send(user);
     } else {
-      throw new Error("InValid credentials");
+      throw new Error("Invalid credentials");
     }
   } catch (err) {
     res.status(400).send("Error: " + err.message);

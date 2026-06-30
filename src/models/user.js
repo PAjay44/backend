@@ -62,7 +62,7 @@ const userSchema = mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "https://hostalitecloud.com/crb/speaker/fredric-martin/",
+      default: "https://geographyandyou.com/images/user-profile.png",
       // If not add photo , it will take this default photo
     },
     about: {

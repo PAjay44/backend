@@ -3,16 +3,20 @@ const { validationEditProfileData } = require("../utils/validation");
 const express = require("express");
 const profileRouter = express.Router();
 
-profileRouter.get("/profile", userAuth, async (req, res) => {
+profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
     res.send(user);
+    // res.json({
+    //   user,
+    //shorthand  creates an obj isnide our json obj user: user
+    // });
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }
 });
 
-profileRouter.patch("/profile/edit", userAuth, async(req, res) => {
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     if (!validationEditProfileData(req)) {
       throw new Error("update not allowed");
@@ -23,7 +27,10 @@ profileRouter.patch("/profile/edit", userAuth, async(req, res) => {
 
     await loggedInUser.save();
 
-    res.send(`${loggedInUser.firstName}, your Profile Updated Successfully`);
+    res.json({
+      message: `${loggedInUser.firstName}, your Profile Updated Successfully`,
+      data: loggedInUser,
+    });
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }
