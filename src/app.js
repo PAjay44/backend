@@ -8,6 +8,7 @@ const authRouter = require("./routes/auth");
 const requestRouter = require("./routes/request");
 const passwordRouter = require("./routes/password");
 const userRouter = require("./routes/user");
+const paymentRouter = require("./routes/payment");
 const cors = require("cors");
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", passwordRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 
 connectDB()

@@ -29,8 +29,14 @@ authRouter.post("/signUp", async (req, res) => {
       emailId,
     });
     // create a new Instance of User model using the data from the req
-    await user.save();
-    res.send("User added Successfully");
+    const savedUser = await user.save();
+
+     const token = await savedUser.getJWT();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+    res.json({message:"User added Successfully", data:savedUser});
   } catch (err) {
     res.status(400).send("Error message:" + err.message);
   }

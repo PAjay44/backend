@@ -46,10 +46,6 @@ const userSchema = mongoose.Schema(
       },
     },
 
-    age: {
-      type: String,
-    },
-
     gender: {
       type: String,
       validate(value) {
@@ -59,6 +55,18 @@ const userSchema = mongoose.Schema(
           throw new Error("Gender is not Valid");
         }
       },
+    },
+
+    age: {
+      type: String,
+    },
+
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType: {
+      type: String,
     },
     photoUrl: {
       type: String,

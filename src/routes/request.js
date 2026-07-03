@@ -45,7 +45,7 @@ requestRouter.post("/request/send/:status/:id", userAuth, async (req, res) => {
     });
 
     const data = await connectionRequest.save();
-    res.json({ message: "connectionRequest sent successfully", data} );
+    res.json({ message: "connectionRequest sent successfully", data });
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }
