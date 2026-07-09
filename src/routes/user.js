@@ -40,13 +40,16 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
     // res.json({ connectionRequest });
 
-    const data = connectionRequest.map((row) => {
-      // we need only our connections ,filter them
-      if (row.fromUserId._id.toString() === loggInUser._id.toString()) {
-        return row.toUserId;
-      }
-      return row.fromUserId;
-    });
+
+    // we need only our connections ,filter them
+    const data = connectionRequest
+  .filter((row) => row.fromUserId && row.toUserId)
+  .map((row) => {
+    if (row.fromUserId._id.toString() === loggInUser._id.toString()) {
+      return row.toUserId;
+    }
+    return row.fromUserId;
+  });
 
     res.json({ data });
   } catch (err) {

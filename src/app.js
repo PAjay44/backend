@@ -10,6 +10,9 @@ const passwordRouter = require("./routes/password");
 const userRouter = require("./routes/user");
 const paymentRouter = require("./routes/payment");
 const cors = require("cors");
+const http = require('http');
+const initializeSocket = require("./utils/socket");
+const chatRouter = require("./routes/chat");
 const app = express();
 
 app.use(
@@ -34,13 +37,17 @@ app.use("/", requestRouter);
 app.use("/", passwordRouter);
 app.use("/", userRouter);
 app.use("/", paymentRouter);
+app.use("/", chatRouter);
 
+const server = http.createServer(app)
+
+initializeSocket(server)
 
 connectDB()
   // First coonected to DB ,after that start the server and listen the request on port 3000
   .then(() => {
     console.log("Database connection established");
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("server is running on port 3000");
     });
   })
@@ -49,3 +56,4 @@ connectDB()
   });
 
 // When we call app.listen(3000),Express creates an HTTP server internally and starts listening for incoming requests on port 3000.
+// internally it uses http module to create server, express is for create an application and handle routes, middlewares.
