@@ -2,6 +2,8 @@ const { userAuth } = require("../middlewares/auth");
 const express = require("express");
 const { Chat } = require("../models/chat");
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
+const onlineUsers = require("../utils/onlineUsers");
 const chatRouter = express.Router();
 
 chatRouter.get("/chat/:targetId", userAuth, async (req, res) => {
@@ -29,6 +31,17 @@ chatRouter.get("/chat/:targetId", userAuth, async (req, res) => {
   }
 
   res.json(chat);
+});
+
+chatRouter.get("/status/:targetId", userAuth, async (req, res) => {
+  const { targetId } = req.params;
+  const user = await User.findById(targetId).select("lastSeen");
+  const online = onlineUsers.has(targetId);
+
+  res.json({
+    online,
+    lastSeen: user?.lastSeen,
+  });
 });
 
 module.exports = chatRouter;

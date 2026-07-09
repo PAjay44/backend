@@ -1,7 +1,11 @@
+const onlineUsers = require("../utils/onlineUsers");
+// save online users in MAP
+// A Map stores key-value pairs.
 const socket = require("socket.io"); // socket config
 const crypto = require("crypto");
-const {Chat} = require("../models/chat");
+const { Chat } = require("../models/chat");
 const { socketAuth } = require("../middlewares/socketAuth");
+const user = require("../models/user");
 
 const getSecretRoomId = (userId, targetId) => {
   return crypto
@@ -21,8 +25,37 @@ const initializeSocket = (server) => {
   io.on("connection", (socket) => {
     // this will accept incoming connection
 
+    const userId = socket.user._id.toString();
+    onlineUsers.set(userId, socket.id);
+    // when users enters chat, socket connection happens then store the user id,socketId in memory
+    console.log(onlineUsers);
+
+    io.emit("userOnline", {
+      userId,
+    });
+    // Now whenever someone connects,everyone receives online
+
+    socket.on("disconnect", async () => {
+      onlineUsers.delete(userId);
+
+      await user.findByIdAndUpdate(userId, {
+        lastSeen: new Date(),
+      });
+
+      const lastSeen = new Date();
+
+      await user.findByIdAndUpdate(userId, {
+        lastSeen,
+      });
+
+      io.emit("userOffline", {
+        userId,
+        lastSeen,
+      });
+    });
+
     socket.on("joinChat", ({ targetId }) => {
-        const userId = socket.user._id;
+      const userId = socket.user._id;
       // To listen for an event from the client,
       const roomId = getSecretRoomId(userId, targetId);
       socket.join(roomId);
@@ -32,22 +65,24 @@ const initializeSocket = (server) => {
 
     socket.on("sendMessage", async ({ targetId, text }) => {
       try {
-         const userId = socket.user._id;
-         const firstName = socket.user.firstName;
+        const userId = socket.user._id;
+        const firstName = socket.user.firstName;
         const roomId = getSecretRoomId(userId, targetId);
         // But hashing adds an extra layer of protection by hiding the actual user IDs.
-        let chat = await Chat.findOne({ participants: { $all:[userId, targetId]} });
+        let chat = await Chat.findOne({
+          participants: { $all: [userId, targetId] },
+        });
         // check weather the chat exist between these people or not
         // why because if chat already exist we can append.
 
         if (!chat) {
           chat = new Chat({
             participants: [userId, targetId],
-            messages:[],
+            messages: [],
           });
         }
 
-        chat.messages.push({ senderId: userId, text })
+        chat.messages.push({ senderId: userId, text });
 
         await chat.save();
         io.to(roomId).emit("messageReceived", { firstName, text });
